@@ -1,16 +1,17 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-const LoginPage = () => {
+const AdminLoginPage = () => {
   const router = useRouter();
   const [inputs, setInputs] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleInputs = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
   };
@@ -20,34 +21,28 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(inputs),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        setLoading(false);
-        return;
-      }
+    // Admin credentials (developer provided)
+    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
-      localStorage.setItem("token", data.token);
-      if (data.user.role === "student") router.push("/student/dashboard");
-      else router.push("/teacher/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    } finally {
-      setLoading(false);
+    if (inputs.email === ADMIN_EMAIL && inputs.password === ADMIN_PASSWORD) {
+      // create a JWT token for admin
+      const token = btoa(JSON.stringify({ role: "admin", email: ADMIN_EMAIL })); // simple demo
+      localStorage.setItem("token", token);
+      toast.success("Admin logged in successfully");
+      router.push("/admin/dashboard");
+    } else {
+      setError("Invalid credentials");
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] to-[#1e293b] px-4">
       <div className="max-w-md w-full bg-[#111827]/80 backdrop-blur-md rounded-3xl shadow-2xl p-10 space-y-6 border border-[#3b82f6]/50">
         <h1 className="text-4xl font-extrabold text-white text-center tracking-wider">
-          School Portal
+          Admin Portal
         </h1>
         <p className="text-center text-[#cbd5e1]">Sign in to your account</p>
 
@@ -78,15 +73,6 @@ const LoginPage = () => {
             className="w-full bg-[#1e293b] border-[#3b82f6] placeholder:text-[#94a3b8] focus:ring-[#3b82f6] focus:border-[#3b82f6] text-white rounded-xl"
           />
 
-          <div className="flex justify-end">
-            <span
-              className="text-sm text-[#60a5fa] hover:underline cursor-pointer"
-              onClick={() => router.push("/forgot-password")}
-            >
-              Forgot password?
-            </span>
-          </div>
-
           <Button
             type="submit"
             disabled={loading}
@@ -96,16 +82,6 @@ const LoginPage = () => {
           </Button>
         </form>
 
-        <div className="text-center text-sm text-[#94a3b8]">
-          <span>Don’t have an account? </span>
-          <span
-            className="text-[#60a5fa] font-semibold hover:underline cursor-pointer"
-            onClick={() => router.push("./sign-up")}
-          >
-            Sign up
-          </span>
-        </div>
-
         <div className="mt-6 text-center text-xs text-[#64748b]">
           © 2026 HomeworkHub Inc.
         </div>
@@ -114,4 +90,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default AdminLoginPage;
