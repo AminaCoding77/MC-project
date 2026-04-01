@@ -1,12 +1,41 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type ClassType = {
+  _id: string;
+  homeroomTeacher: {
+    email: string;
+    firstname: string;
+    lastname: string;
+    _id: string;
+  };
+  name: string;
+  students: {
+    firstname: string;
+    lastname: string;
+    email: string;
+    _id: string;
+  }[];
+};
 
 const AdminDashboardPage = () => {
   const router = useRouter();
-  const [classes, setClasses] = useState<
-    { id: string; name: string; teacher?: { name: string }; students: any[] }[]
-  >([]);
+  const [classes, setClasses] = useState<ClassType[] | null>(null);
+
+  useEffect(() => {
+    const BringClasses = async () => {
+      const res = await fetch("/api/admin/bring-classes", {
+        method: "GET",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setClasses(data.classes);
+      }
+    };
+    BringClasses();
+  }, []);
 
   return (
     <div className="min-h-screen px-6 sm:px-10 py-8 bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white space-y-10">
@@ -63,7 +92,7 @@ const AdminDashboardPage = () => {
             </tr>
           </thead>
           <tbody>
-            {classes.length === 0 ? (
+            {classes?.length === 0 ? (
               <tr>
                 <td
                   colSpan={3}
@@ -73,15 +102,17 @@ const AdminDashboardPage = () => {
                 </td>
               </tr>
             ) : (
-              classes.map((cls) => (
+              classes?.map((cls) => (
                 <tr
-                  key={cls.id}
-                  onClick={() => router.push(`/admin/classes/${cls.id}`)}
+                  key={cls._id}
+                  onClick={() => router.push(`/admin/classes/${cls._id}`)}
                   className="cursor-pointer border-t border-[#3b82f6]/20 hover:bg-[#1e293b]/50 transition"
                 >
                   <td className="px-6 py-3 text-white">{cls.name}</td>
                   <td className="px-6 py-3 text-[#cbd5e1]">
-                    {cls.teacher ? cls.teacher.name : "No homeroom teacher"}
+                    {cls.homeroomTeacher
+                      ? cls.homeroomTeacher.firstname
+                      : "No homeroom teacher"}
                   </td>
                   <td className="px-6 py-3 text-[#cbd5e1]">
                     {cls.students.length}

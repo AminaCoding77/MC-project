@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -21,18 +22,27 @@ const AdminLoginPage = () => {
     setLoading(true);
     setError("");
 
-    // Admin credentials (developer provided)
-    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+    try {
+      const res = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputs),
+      });
 
-    if (inputs.email === ADMIN_EMAIL && inputs.password === ADMIN_PASSWORD) {
-      // create a JWT token for admin
-      const token = btoa(JSON.stringify({ role: "admin", email: ADMIN_EMAIL })); // simple demo
-      localStorage.setItem("token", token);
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
       toast.success("Admin logged in successfully");
       router.push("/admin/dashboard");
-    } else {
-      setError("Invalid credentials");
+    } catch (err) {
+      setError("Something went wrong");
+      console.error(err);
     }
 
     setLoading(false);
