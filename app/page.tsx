@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
+
+type UserType = {
+  firstname: string;
+  lastname: string;
+  profilePicture: string | null;
+  email: string;
+};
 
 const Page = () => {
   const [selected, setSelected] = useState<Date | null>(null);
+  const [user, SetUser] = useState<UserType | null>(null);
+  const { push } = useRouter();
+
+  useEffect(() => {
+    if (user === null) {
+      push("./frontpage");
+    }
+  }, []);
 
   const handleDateClick = (date: Date) => {
     setSelected(date);
