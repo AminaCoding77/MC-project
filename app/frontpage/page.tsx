@@ -17,6 +17,9 @@ const Page = () => {
         </p>
         <div className="flex gap-4">
           <Button
+            onClick={() => {
+              push("/login");
+            }}
             variant="secondary"
             className="text-[20px] px-4 py-2 bg-blue-500 shadow-2xl"
           >
