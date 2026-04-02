@@ -1,63 +1,39 @@
-import connect from "@/lib/mongoose";
-import User from "@/app/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import connect from "@/lib/mongoose";
+import User from "@/app/models/User";
 
 export async function GET(req: NextRequest) {
-  await connect();
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return NextResponse.json(
+      { error: "No authorization header provided" },
+      { status: 401 },
+    );
+  }
+
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return NextResponse.json(
+      { error: "Invalid token format" },
+      { status: 401 },
+    );
+  }
 
   try {
-    // 1️⃣ Extract token from headers
-    const authHeader = req.headers.get("authorization");
-    console.log("Auth header received:", authHeader);
+    const payload = jwt.verify(token, process.env.JWT_SECRET!);
 
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: "No authorization header provided" },
-        { status: 401 },
-      );
-    }
+    await connect();
 
-    const token = authHeader.split(" ")[1]?.replace(/"/g, "").trim(); // remove quotes & trim
-    console.log("Token extracted:", token);
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Token missing in authorization header" },
-        { status: 401 },
-      );
-    }
-
-    // 2️⃣ Verify token
-    let decoded: any;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET!);
-      console.log("Decoded token:", decoded);
-    } catch (err) {
-      console.error("JWT verification failed:", err);
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 },
-      );
-    }
-
-    // 3️⃣ Check if user role is admin
-    if (decoded.role !== "admin") {
-      return NextResponse.json(
-        { error: "You do not have permission to access this resource" },
-        { status: 403 },
-      );
-    }
-
-    // 4️⃣ Fetch teachers
+    // fetch only necessary fields for teachers
     const teachers = await User.find({ role: "teacher" });
 
     return NextResponse.json(teachers);
   } catch (err) {
-    console.error("Unexpected error:", err);
+    console.error(err);
     return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 },
+      { error: "Invalid or expired token" },
+      { status: 401 },
     );
   }
 }

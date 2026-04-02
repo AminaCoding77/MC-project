@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
     <>
       {/* Mobile menu toggle */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-[#111827]/80 p-2 rounded-lg shadow-lg text-white"
+        className="md:hidden fixed top-4 left-4 z-50 bg-[#0d0f14]/80 p-2 rounded-lg shadow-lg text-white"
         onClick={() => setIsOpen(!isOpen)}
       >
         ☰
@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
       <div
         className={`
           fixed top-0 left-0 h-screen z-40
-          bg-[#111827]/80 backdrop-blur-md border-r border-[#3b82f6]/50 text-white
+          bg-[#0d0f14]/90 backdrop-blur-xl border-r border-white/[0.06] text-white
           flex flex-col p-6 shadow-2xl
           w-64
           transform transition-transform duration-300
@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
           md:translate-x-0 md:static md:flex
         `}
       >
-        <div className="text-2xl font-bold mb-8 text-center tracking-wide">
+        <div className="text-2xl font-bold mb-8 text-center tracking-wide text-white/90">
           {userRole === "student" ? "Student Portal" : "Teacher Portal"}
         </div>
 
@@ -71,9 +71,11 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
             <button
               key={link.key}
               onClick={() => handleNavigate(link.route, link.key)}
-              className={`text-left px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[#3b82f6]/30 ${
-                active === link.key ? "bg-[#3b82f6]/50 font-semibold" : ""
-              }`}
+              className={`
+                text-left px-4 py-3 rounded-xl transition-all duration-200
+                hover:bg-blue-500/20
+                ${active === link.key ? "bg-blue-500/10 font-semibold" : "text-gray-300"}
+              `}
             >
               {link.name}
             </button>
@@ -86,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
               localStorage.removeItem("token");
               router.push("/login");
             }}
-            className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/50 transition-all duration-200 font-medium mt-4"
+            className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-500/30 transition-all duration-200 font-medium mt-4"
           >
             Logout
           </button>

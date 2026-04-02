@@ -9,8 +9,8 @@ const UserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   role: { type: String, enum: ["student", "teacher"], required: true },
   classes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
-  enrolledClasses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
   subject: { type: String, default: null },
+  enrolledClass: { type: mongoose.Schema.Types.ObjectId, ref: "Class" },
 });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
