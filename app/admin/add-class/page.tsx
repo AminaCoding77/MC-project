@@ -55,6 +55,8 @@ const Page = () => {
 
     if (res.ok) {
       toast.success("Successfully created class");
+      setInput("");
+      setTeacherId("");
     } else {
       toast.error("Something went wrong");
     }
