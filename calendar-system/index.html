@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Assignment Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📚 Teacher Assignment Calendar</h1>
+                <p class="subtitle">Manage homework, tests & projects with ease</p>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Classes</h3>
+                    <button class="btn btn-primary" id="addClassBtn">+ Add Class</button>
+                    <div class="classes-list" id="classesList"></div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Quick Add Assignment</h3>
+                    <form id="quickAddForm" class="form-group">
+                        <input type="text" id="assignmentTitle" placeholder="Assignment title" required>
+                        <select id="assignmentClass" required>
+                            <option value="">Select class</option>
+                        </select>
+                        <input type="date" id="assignmentDate" required>
+                        <select id="assignmentType" required>
+                            <option value="homework">📝 Homework</option>
+                            <option value="test">📋 Test</option>
+                            <option value="project">🎨 Project</option>
+                        </select>
+                        <textarea id="assignmentDesc" placeholder="Description (optional)" rows="3"></textarea>
+                        <button type="submit" class="btn btn-success">Add Assignment</button>
+                    </form>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Upcoming (14 days)</h3>
+                    <div class="upcoming-list" id="upcomingList"></div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Calendar Navigation -->
+                <div class="calendar-header">
+                    <button class="btn btn-nav" id="prevMonth">← Previous</button>
+                    <h2 id="currentMonth"></h2>
+                    <button class="btn btn-nav" id="nextMonth">Next →</button>
+                    <button class="btn btn-secondary" id="todayBtn">Today</button>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="calendar-container">
+                    <div class="weekdays">
+                        <div class="weekday">Sun</div>
+                        <div class="weekday">Mon</div>
+                        <div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div>
+                        <div class="weekday">Thu</div>
+                        <div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>
+                    </div>
+                    <div class="days" id="calendarDays"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Class Modal -->
+    <div class="modal" id="addClassModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Class</h3>
+                <button class="modal-close" id="closeClassModal">&times;</button>
+            </div>
+            <form id="addClassForm" class="form-group">
+                <input type="text" id="className" placeholder="Class name (e.g., Physics 101)" required>
+                <input type="text" id="classCode" placeholder="Class code (e.g., PHY101)" required>
+                <textarea id="classDesc" placeholder="Description (optional)" rows="3"></textarea>
+                <button type="submit" class="btn btn-success">Create Class</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assignment Details Modal -->
+    <div class="modal" id="assignmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="modal-close" id="closeAssignmentModal">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" id="completeBtn">✓ Mark Complete</button>
+                <button class="btn btn-danger" id="deleteBtn">🗑 Delete</button>
+                <button class="btn btn-secondary" id="closeModalBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
